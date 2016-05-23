@@ -1,0 +1,4 @@
+[
+	{"type":"0","start":"0", "end":"10","src":{"video":"videos/1.mp4", "type":"mp4"}},
+	{"type":"1","start":"10", "end":"20","src":{"audio":"audio/1.mp3", "img":"images/1.png"}}
+]
