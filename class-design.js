@@ -59,6 +59,7 @@ class segment{
 class video{
 	constructor(){
 		this.SegmentNumber = -1;
+		this.Segment = [];
 	}
 	changeCurrentSegment(segment){
 		this.CurrentSegment = segment;
@@ -79,17 +80,16 @@ var text = 'text';
 function createSegment(i){
 	if(inp[i].type == 0){
 		Segment = new segment(inp[i].type, inp[i].start, inp[i].end, inp[i].src.video, inp[i].src.type);
-		Video.changeCurrentSegment(Segment);
 	}
 	if(inp[i].type == 1){
 		Segment = new segment(inp[i].type, inp[i].start, inp[i].end, inp[i].src.audio, inp[i].src.img);
-		Video.changeCurrentSegment(Segment);
 	}
+	return Segment;
 }
 
 function StartNextSegment(){
 	setTimeout(function(){
-		createSegment(Video.SegmentNumber+1);
+		Video.changeCurrentSegment(Video.Segment[Video.SegmentNumber+1]);
 		play_pause();
 		}, 
 		Video.timeleft*1000);
@@ -109,7 +109,10 @@ function onChange(event) {
   reader.onload = function(event) { 
     inp = event.target.result;
     inp=JSON.parse(inp);
-    createSegment(0);
+    for(var i=0;i<inp.length;i++){
+    	Video.Segment[i] = createSegment(i);
+    }
+    Video.changeCurrentSegment(Video.Segment[0]);
   };
   reader.readAsText(file);  
 }
