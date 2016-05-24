@@ -1,16 +1,15 @@
+var text = 'text';	
+
 class segment{
-	constructor(Type, start_time, end_time){
+	constructor(Type){
 		this.Type = Type;
-		this.start_time = start_time;
-		this.end_time = end_time;
 		this.State = "stop";
 		if(Type == 0){
-			this.VideoSrc = arguments[3]; 
-			this.VideoType = arguments[4];
+			this.VideoSrc = arguments[1]; 
 		}
 		if(Type == 1){
-			this.AudioSrc = arguments[3];
-			this.ImgSrc = arguments[4];
+			this.AudioSrc = arguments[1];
+			this.ImgSrc = arguments[2];
 		}
 	}
 	start(){
@@ -18,7 +17,6 @@ class segment{
 		if(this.Type == 0){
 			this.video = document.createElement("VIDEO");
 			this.video.src = this.VideoSrc;
-			this.video.type = this.VideoType;
 			this.video.play();
 		}
 		if(this.Type == 1){
@@ -27,6 +25,7 @@ class segment{
 
 			this.audio = document.createElement("AUDIO");
 			this.audio.src = this.AudioSrc;
+			//this.duration = this.audio.duration;
 			this.audio.play();
 		}
 	}
@@ -64,7 +63,7 @@ class video{
 	changeCurrentSegment(segment){
 		this.CurrentSegment = segment;
 		this.SegmentNumber +=1;
-		this.timeleft = (this.CurrentSegment.end_time-this.CurrentSegment.start_time)*1000;
+		this.timeleft = (this.CurrentSegment.duration)*1000;
 	}
 	getCurrentSegment(){
 		return this.CurrentSegment;
@@ -75,14 +74,13 @@ var inp;
 var Segment;
 var Video= new video();
 var display='display';
-var text = 'text';
 
 function createSegment(i){
 	if(inp[i].type == 0){
-		Segment = new segment(inp[i].type, inp[i].start, inp[i].end, inp[i].src.video, inp[i].src.type);
+		Segment = new segment(inp[i].type, inp[i].src.video, inp[i].src.type);
 	}
 	if(inp[i].type == 1){
-		Segment = new segment(inp[i].type, inp[i].start, inp[i].end, inp[i].src.audio, inp[i].src.img);
+		Segment = new segment(inp[i].type, inp[i].src.audio, inp[i].src.img);
 	}
 	return Segment;
 }
@@ -128,7 +126,7 @@ function play_pause(){
 	if(Segment.State == "stop"){
 		Segment.start();
 		if(Segment.Type == 0){
-			document.getElementById(display).replaceChild(Segment.video, document.getElementById(display).childNodes[0]);
+			document.getElementById(documentisplay).replaceChild(Segment.video, document.getElementById(display).childNodes[0]);
 		}
 		if(Segment.Type == 1){
 			document.getElementById(display).replaceChild(Segment.image, document.getElementById(display).childNodes[0]);
