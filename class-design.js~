@@ -48,7 +48,7 @@ class segment{
 		}
 		if(this.Type == 1){
 			this.audio.play();
-		}	
+		}
 	}
 
 	status(){
@@ -64,7 +64,7 @@ class video{
 	changeCurrentSegment(segment){
 		this.CurrentSegment = segment;
 		this.SegmentNumber +=1;
-		this.timeleft = (this.CurrentSegment.end_time-this.CurrentSegment.start_time)*1000;
+		this.timeleft = this.CurrentSegment.end_time-this.CurrentSegment.start_time;
 	}
 	getCurrentSegment(){
 		return this.CurrentSegment;
@@ -92,20 +92,18 @@ function StartNextSegment(){
 		Video.changeCurrentSegment(Video.Segment[Video.SegmentNumber+1]);
 		play_pause();
 		}, 
-		Video.timeleft);
+		Video.timeleft*1000);
 	var t=new Date().getTime();
-	function wait(){
-		if(Video.CurrentSegment.State == "play"){
-			setTimeout(wait, 100)
-		}
-		else{
+	while(true){
+		document.getElementById(text).value=video.CurrentSegment.State;
+		if(video.CurrentSegment.State == "pause"){
+			document.getElementById(text).value="asdfg";
 			t =  new Date().getTime() - t;
 			Video.timeleft = Video.timeleft - t;
 			clearTimeout(timeOUT);
 			return;
 		}
 	}
-	wait();
 }
 
 function onChange(event) {
@@ -133,7 +131,7 @@ function play_pause(){
 		if(Segment.Type == 1){
 			document.getElementById(display).replaceChild(Segment.image, document.getElementById(display).childNodes[0]);
 		}
-		document.getElementById(display).removeChild(document.getElementById(display).childNodes[1]);
+		//document.getElementById(display).removeChild(document.getElementById(display).childNodes[1]);
 		StartNextSegment();
 	}
 	else if(Segment.State == "pause"){
@@ -142,6 +140,7 @@ function play_pause(){
 	}
 	else if(Segment.State == "play"){
 		Segment.pause();
+		//document.getElementById(text).value=Video.CurrentSegment.State;	
 	}
 }
 

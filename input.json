@@ -1,4 +1,4 @@
 [
-	{"type":"0","start":"0", "end":"10","src":{"video":"videos/1.mp4", "type":"mp4"}},
-	{"type":"1","start":"10", "end":"20","src":{"audio":"audio/1.mp3", "img":"images/1.png"}}
+	{"type":"0","start":"0", "end":"5","src":{"video":"http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/MediaCoder/MediaCoder_test1_1m9s_AVC_VBR_256kbps_640x480_24fps_MPEG2Layer3_CBR_160kbps_Stereo_22050Hz.mp4", "type":"mp4"}},
+	{"type":"1","start":"5", "end":"20","src":{"audio":"audio/1.mp3", "img":"images/1.png"}}	
 ]
