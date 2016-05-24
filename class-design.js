@@ -144,4 +144,3 @@ function play_pause(){
 		Segment.pause();
 	}
 }
-
