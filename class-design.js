@@ -4,6 +4,7 @@ class segment{
 	constructor(Type){
 		this.Type = Type;
 		this.State = "stop";
+		this.duration =0;
 		if(Type == 0){
 			this.VideoSrc = arguments[1]; 
 		}
@@ -16,7 +17,8 @@ class segment{
 		this.State = "play";	
 		if(this.Type == 0){
 			this.video = document.createElement("VIDEO");
-			this.video.src = this.VideoSrc;
+			this.video.src = this.VideoSrc;		
+			this.video.load();
 			this.video.play();
 		}
 		if(this.Type == 1){
@@ -25,7 +27,6 @@ class segment{
 
 			this.audio = document.createElement("AUDIO");
 			this.audio.src = this.AudioSrc;
-			//this.duration = this.audio.duration;
 			this.audio.play();
 		}
 	}
@@ -59,14 +60,19 @@ class video{
 	constructor(){
 		this.SegmentNumber = -1;
 		this.Segment = [];
+		this.timeleft=0;
+		this.numOfSegments =0;
 	}
 	changeCurrentSegment(segment){
 		this.CurrentSegment = segment;
 		this.SegmentNumber +=1;
-		this.timeleft = (this.CurrentSegment.duration)*1000;
 	}
 	getCurrentSegment(){
 		return this.CurrentSegment;
+	}
+	reset(){
+		this.SegmentNumber=0;
+		this.timeleft=0;
 	}
 }		
 
@@ -87,13 +93,22 @@ function createSegment(i){
 
 function StartNextSegment(){
 	var timeOUT = setTimeout(function(){
-		Video.changeCurrentSegment(Video.Segment[Video.SegmentNumber+1]);
-		play_pause();
+		if(Video.SegmentNumber < Video.numOfSegments-1)
+		{
+			Video.CurrentSegment.State = "stop";
+			Video.changeCurrentSegment(Video.Segment[Video.SegmentNumber+1]);
+			play_pause();
+		}
+		else{
+			Video.CurrentSegment.State = "stop";
+			Video.changeCurrentSegment(Video.Segment[0]);
+			Video.reset();
+		}
 		}, 
 		Video.timeleft);
 	var t=new Date().getTime();
 	function wait(){
-		if(Video.CurrentSegment.State == "play"){
+		if(Video.CurrentSegment.State != "pause"){
 			setTimeout(wait, 100)
 		}
 		else{
@@ -112,6 +127,7 @@ function onChange(event) {
   reader.onload = function(event) { 
     inp = event.target.result;
     inp=JSON.parse(inp);
+    Video.numOfSegments = inp.length;
     for(var i=0;i<inp.length;i++){
     	Video.Segment[i] = createSegment(i);
     }
@@ -126,19 +142,31 @@ function play_pause(){
 	if(Segment.State == "stop"){
 		Segment.start();
 		if(Segment.Type == 0){
-			document.getElementById(documentisplay).replaceChild(Segment.video, document.getElementById(display).childNodes[0]);
+			document.getElementById(display).replaceChild(Segment.video, document.getElementById(display).childNodes[0]);
+			var myVideoPlayer = document.getElementById(display).childNodes[0];
+			myVideoPlayer.addEventListener('loadedmetadata', function () {
+			    Segment.duration = myVideoPlayer.duration;
+			    Video.timeleft = Segment.duration*1000;
+			    StartNextSegment();
+			 });
 		}
 		if(Segment.Type == 1){
 			document.getElementById(display).replaceChild(Segment.image, document.getElementById(display).childNodes[0]);
+			Segment.audio.addEventListener('loadedmetadata',function(){
+				Segment.duration = this.duration;
+				Video.timeleft = Segment.duration*1000;
+				StartNextSegment();
+			});
 		}
 		document.getElementById(display).removeChild(document.getElementById(display).childNodes[1]);
-		StartNextSegment();
 	}
 	else if(Segment.State == "pause"){
+		document.getElementById('play').innerHTML = '&#9658';
 		Segment.resume();
 		StartNextSegment();
 	}
 	else if(Segment.State == "play"){
+		document.getElementById('play').innerHTML = '&#9614'+'&#9614';
 		Segment.pause();
 	}
 }
